@@ -4,12 +4,12 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default_layout}">
 
-<!-- ===================== HEAD ===================== -->
+
 <th:block layout:fragment="head">
     <title>자주하는 질문 | 창고이음 (SEMO)</title>
     <meta name="description" content="창고이음(세모) 자주하는 질문: 예약, 요금, 보관 가능/금지 물품, 픽업·배송, 환불·취소, 보안, 보험, 마일리지 등." />
 
-    <!-- FAQPage 구조화 데이터 (SEO) -->
+
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -36,7 +36,7 @@
     </script>
 </th:block>
 
-<!-- ===================== PAGE STYLES ===================== -->
+
 <th:block layout:fragment="extra-css">
     <style>
         :root {
@@ -84,13 +84,13 @@
     </style>
 </th:block>
 
-<!-- ===================== PAGE CONTENT ===================== -->
+
 <th:block layout:fragment="content">
     <main class="container" id="faq-root">
         <h1 class="page-title">자주하는 질문 (FAQ)</h1>
         <p class="page-sub">창고이음(SEMO) 이용 중 자주 묻는 질문을 모았어요. 원하는 내용을 검색하거나 카테고리로 골라보세요.</p>
 
-        <!-- 툴바: 검색 + 카테고리칩 + 전체 토글 -->
+
         <div class="toolbar" role="region" aria-label="FAQ toolbar">
             <div class="search">
                 <input type="search" id="faq-search" placeholder="질문·키워드를 입력하세요 (예: 예약, 온도, 환불)" aria-label="FAQ 검색" />
@@ -113,10 +113,8 @@
             </div>
         </div>
 
-        <!-- FAQ 리스트 -->
+
         <section id="faq-list" aria-live="polite">
-            <!-- 항목 템플릿 (정적 샘플 + 필요 시 서버 데이터로 치환 가능) -->
-            <!-- th:each 예시: th:each="f : ${faqs}" data-cat="[[${f.category}]]"  -->
 
             <article class="faq" data-cat="예약" id="q-reserve-how">
                 <button class="faq__q" aria-expanded="false" aria-controls="a-reserve-how">
@@ -243,7 +241,7 @@
     </main>
 </th:block>
 
-<!-- ===================== PAGE SCRIPTS ===================== -->
+
 <th:block layout:fragment="extra-js">
     <script th:inline="javascript">
         (function() {
