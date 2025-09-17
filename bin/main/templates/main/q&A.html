@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html
+  lang="ko"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layouts/default_layout}"
+>
+  <th:block layout:fragment="head">
+    <title>자주하는 질문 | 창고이음 (SEMO)</title>
+    <meta
+      name="description"
+      content="창고이음(세모) 자주하는 질문: 예약, 요금, 보관 가능/금지 물품, 픽업·배송, 환불·취소, 보안, 보험, 마일리지 등."
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "예약은 어떻게 하나요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "원하는 창고 상세 페이지에서 날짜와 물품 유형/부피를 선택한 뒤, 결제하면 예약이 확정됩니다."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "보관이 금지된 물품이 있나요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "위험물(가연성·폭발물), 불법 물품, 냄새·부패 우려 물품, 현금·유가증권 등 고가 귀중품은 보관이 불가합니다."
+            }
+          }
+        ]
+      }
+    </script>
+  </th:block>
+
+  <th:block layout:fragment="extra-css">
+    <style>
+      :root {
+        --brand: #e67e22;
+        --ink: #2c3e50;
+        --muted: #6b7280;
+        --bg-soft: #f8fafc;
+        --border: #e5e7eb;
+      }
+      body {
+        font-family: "Noto Sans KR", system-ui, -apple-system, Segoe UI, Roboto,
+          "Apple SD Gothic Neo", sans-serif;
+        margin: 0;
+      }
+
+      /* ======= SHARED CONTAINER ======= */
+      .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 32px 20px;
+      }
+
+      /* ======= HEADER ======= */
+      .site-header {
+        background: linear-gradient(90deg, #6a11cb, #2575fc);
+        color: #fff;
+      }
+      .site-header .inner {
+        padding: 14px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .logo a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 800;
+        font-size: 1.4rem;
+      }
+      .logo a span {
+        color: #ffd166;
+      }
+      .nav {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .nav a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 600;
+        padding: 6px 10px;
+        border-radius: 8px;
+      }
+      .nav a:hover {
+        background: rgba(255, 255, 255, 0.12);
+      }
+      .auth {
+        display: flex;
+        gap: 8px;
+      }
+      .btn {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        text-decoration: none;
+        display: inline-block;
+        background: #fff;
+        color: #1f2937;
+        font-weight: 700;
+      }
+      .btn.outline {
+        background: transparent;
+        border: 1px solid #fff;
+        color: #fff;
+      }
+
+      /* ======= PAGE TITLES / FAQ UI ======= */
+      .page-title {
+        font-size: clamp(24px, 2.8vw, 34px);
+        font-weight: 800;
+        color: var(--ink);
+        margin-bottom: 8px;
+      }
+      .page-sub {
+        color: var(--muted);
+        margin-bottom: 24px;
+      }
+
+      .toolbar {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 12px;
+        align-items: center;
+        margin: 18px 0 26px;
+      }
+      .search {
+        position: relative;
+      }
+      .search input {
+        width: 100%;
+        padding: 12px 40px 12px 14px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        outline: none;
+      }
+      .search .icon {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 18px;
+        color: var(--muted);
+      }
+
+      .chipbar {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .chip {
+        border: 1px solid var(--border);
+        background: #fff;
+        padding: 8px 12px;
+        border-radius: 999px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .chip.active {
+        background: var(--brand);
+        color: #fff;
+        border-color: var(--brand);
+      }
+
+      .faq {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        overflow: hidden;
+      }
+      .faq + .faq {
+        margin-top: 12px;
+      }
+      .faq__q {
+        width: 100%;
+        text-align: left;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: center;
+        padding: 16px;
+        background: var(--bg-soft);
+        border: none;
+        cursor: pointer;
+      }
+      .faq__q:hover {
+        background: #eef2ff;
+      }
+      .faq__q-title {
+        font-weight: 700;
+        color: var(--ink);
+      }
+      .faq__q-meta {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .faq__a {
+        display: none;
+        padding: 16px;
+        line-height: 1.7;
+        color: #111827;
+        border-top: 1px solid var(--border);
+        background: #fff;
+      }
+      .faq.open .faq__a {
+        display: block;
+      }
+
+      .utils {
+        display: flex;
+        gap: 10px;
+      }
+      .btn-ctl {
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+        padding: 10px 18px;
+        border: none;
+        border-radius: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        cursor: pointer;
+        transition: all 0.25s ease;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .btn-ctl:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+      }
+      .btn-ctl:active {
+        transform: scale(0.97);
+      }
+
+      .empty {
+        display: none;
+        text-align: center;
+        color: var(--muted);
+        padding: 26px;
+        border: 1px dashed var(--border);
+        border-radius: 14px;
+        background: #fff;
+      }
+      .empty.show {
+        display: block;
+      }
+
+      .badge {
+        font-size: 12px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: #fff;
+        color: var(--muted);
+      }
+
+      @media (max-width: 640px) {
+        .toolbar {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ======= FOOTER ======= */
+      .site-footer {
+        background: #2c3e50;
+        color: #ddd;
+        padding: 32px 20px;
+        font-size: 0.95em;
+        margin-top: 40px;
+      }
+      .site-footer .inner {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+      .footer-left h3 {
+        color: #ffd166;
+        margin: 0 0 8px;
+      }
+      .site-footer a {
+        color: #ffd166;
+        text-decoration: none;
+      }
+      .sns a {
+        margin-right: 8px;
+        font-size: 1.2em;
+        color: #ddd;
+      }
+      .sns a:hover {
+        color: #ffd166;
+      }
+    </style>
+  </th:block>
+
+  <th:block layout:fragment="content">
+    <!-- ======= HEADER (추가) ======= -->
+    <header class="site-header">
+      <div class="container inner">
+        <div class="logo">
+          <a href="/">SEMO <span>창고이음</span></a>
+        </div>
+        <nav class="nav">
+          <a href="/introduce">서비스 소개</a>
+          <a href="/faq">FAQ</a>
+          <a href="/warehouses">창고 찾기</a>
+          <a href="/contact">고객센터</a>
+        </nav>
+        <div class="auth">
+          <a class="btn" href="/login">로그인</a>
+          <a class="btn outline" href="/signup">회원가입</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- ======= MAIN ======= -->
+    <main class="container" id="faq-root">
+      <h1 class="page-title">자주하는 질문 (FAQ)</h1>
+      <p class="page-sub">
+        SEMO 이용 중 자주 묻는 질문을 모았어요. 원하는 내용을 검색하거나
+        카테고리로 골라보세요.
+      </p>
+
+      <div class="toolbar" role="region" aria-label="FAQ toolbar">
+        <div class="search">
+          <input
+            type="search"
+            id="faq-search"
+            placeholder="질문·키워드를 입력하세요 (예: 예약, 온도, 환불)"
+            aria-label="FAQ 검색"
+          />
+          <span class="icon">🔎</span>
+        </div>
+        <div class="chipbar" id="chipbar" aria-label="카테고리 선택">
+          <button class="chip active" data-cat="all" type="button">전체</button>
+          <button class="chip" data-cat="예약" type="button">예약</button>
+          <button class="chip" data-cat="요금/결제" type="button">
+            요금/결제
+          </button>
+          <button class="chip" data-cat="픽업·배송" type="button">
+            픽업·배송
+          </button>
+          <button class="chip" data-cat="환불/취소" type="button">
+            환불/취소
+          </button>
+        </div>
+        <div class="utils">
+          <button class="btn-ctl" id="btn-open"><span>자세히</span></button>
+          <button class="btn-ctl" id="btn-close"><span>간략히</span></button>
+        </div>
+      </div>
+
+      <section id="faq-list" aria-live="polite">
+        <article class="faq" data-cat="예약" id="q-reserve-how">
+          <button
+            class="faq__q"
+            aria-expanded="false"
+            aria-controls="a-reserve-how"
+          >
+            <span class="faq__q-title">예약은 어떻게 하나요?</span>
+            <span class="faq__q-meta">
+              <span class="badge">예약</span>
+              <span class="copy" data-anchor="#q-reserve-how">링크복사</span>
+            </span>
+          </button>
+          <div
+            class="faq__a"
+            id="a-reserve-how"
+            role="region"
+            aria-labelledby="q-reserve-how"
+          >
+            원하는 창고 상세 페이지에서 <b>기간·물품 유형·부피</b>를 선택하고
+            결제하면 예약이 확정됩니다. 결제 전까지는 장바구니에서 수정·삭제가
+            가능합니다.
+          </div>
+        </article>
+
+        <article class="faq" data-cat="예약" id="q-reserve-change">
+          <button
+            class="faq__q"
+            aria-expanded="false"
+            aria-controls="a-reserve-change"
+          >
+            <span class="faq__q-title">예약 변경/연장은 가능한가요?</span>
+            <span class="faq__q-meta">
+              <span class="badge">예약</span>
+              <span class="copy" data-anchor="#q-reserve-change">링크복사</span>
+            </span>
+          </button>
+          <div
+            class="faq__a"
+            id="a-reserve-change"
+            role="region"
+            aria-labelledby="q-reserve-change"
+          >
+            보관 종료일 전이라면 <b>마이페이지 &gt; 예약 내역</b>에서 연장할 수
+            있습니다. 기간 변경 시 차액이 정산됩니다.
+          </div>
+        </article>
+
+        <article class="faq" data-cat="요금/결제" id="q-price-calc">
+          <button
+            class="faq__q"
+            aria-expanded="false"
+            aria-controls="a-price-calc"
+          >
+            <span class="faq__q-title">요금은 어떻게 계산되나요?</span>
+            <span class="faq__q-meta">
+              <span class="badge">요금/결제</span>
+              <span class="copy" data-anchor="#q-price-calc">링크복사</span>
+            </span>
+          </button>
+          <div
+            class="faq__a"
+            id="a-price-calc"
+            role="region"
+            aria-labelledby="q-price-calc"
+          >
+            요금은 <b>보관 면적(또는 용량) × 기간</b>을 기준으로 하며, 창고별
+            기본단가와 시즌 요인이 반영됩니다. 결제 화면에서 상세 내역을 확인할
+            수 있습니다.
+          </div>
+        </article>
+
+        <!-- (중간 생략된 단락들 유지) -->
+        <p></p>
+        <div
+          class="faq__a"
+          id="a-allowed-items"
+          role="region"
+          aria-labelledby="q-allowed-items"
+        >
+          일반 생활용품, 재고상품, 계절용품 등 대부분 보관이 가능하며, 창고별
+          특화(상온/저온/상습도 관리) 옵션을 제공합니다. <b>냉장·냉동</b>이
+          필요한 경우 해당 태그가 있는 창고를 선택하세요.
+        </div>
+
+        <div
+          class="faq__a"
+          id="a-security-iot"
+          role="region"
+          aria-labelledby="q-security-iot"
+        >
+          창고별로 <b>CCTV, 출입통제, 화재감지</b>를 기본 제공하며, 일부 창고는
+          <b>IoT 센서</b>로 온·습도를 실시간 모니터링합니다. 사용자 앱에서
+          기록을 확인할 수 있습니다.
+        </div>
+
+        <p></p>
+        <div
+          class="faq__a"
+          id="a-insurance"
+          role="region"
+          aria-labelledby="q-insurance"
+        >
+          제휴 창고는 화재·도난 등 기초 보장에 가입되어 있으며, 고가 물품 보관
+          시 <b>추가 보장 옵션</b>을 선택할 수 있습니다. 보장 범위와 한도는
+          창고별로 상이합니다.
+        </div>
+
+        <article class="faq" data-cat="픽업·배송" id="q-pickup-delivery">
+          <button
+            class="faq__q"
+            aria-expanded="false"
+            aria-controls="a-pickup-delivery"
+          >
+            <span class="faq__q-title">픽업·배송 서비스를 이용하려면?</span>
+            <span class="faq__q-meta">
+              <span class="badge">픽업·배송</span>
+              <span class="copy" data-anchor="#q-pickup-delivery"
+                >링크복사</span
+              >
+            </span>
+          </button>
+          <div
+            class="faq__a"
+            id="a-pickup-delivery"
+            role="region"
+            aria-labelledby="q-pickup-delivery"
+          >
+            예약 시 <b>픽업/배송 추가</b>를 선택하면 제휴 물류사가 방문 수거
+            또는 배송을 진행합니다. 지역·물량에 따라 추가 비용이 발생할 수
+            있습니다.
+          </div>
+        </article>
+
+        <p></p>
+        <div
+          class="faq__a"
+          id="a-mileage"
+          role="region"
+          aria-labelledby="q-mileage"
+        >
+          결제 금액의 일정 비율이 자동 적립되며, <b>배송·픽업 비용</b> 결제 시
+          차감 사용이 가능합니다. 프로모션에 따라 추가 적립이 제공될 수
+          있습니다.
+        </div>
+
+        <article class="faq" data-cat="환불/취소" id="q-refund-cancel">
+          <button
+            class="faq__q"
+            aria-expanded="false"
+            aria-controls="a-refund-cancel"
+          >
+            <span class="faq__q-title">예약 취소 및 환불 규정이 궁금해요.</span>
+            <span class="faq__q-meta">
+              <span class="badge">환불/취소</span>
+              <span class="copy" data-anchor="#q-refund-cancel">링크복사</span>
+            </span>
+          </button>
+          <div
+            class="faq__a"
+            id="a-refund-cancel"
+            role="region"
+            aria-labelledby="q-refund-cancel"
+          >
+            이용 시작 <b>24시간 전</b>까지 취소 시 전액 환불, 이후에는 단계별
+            수수료가 적용됩니다. 창고별 특약이 있을 수 있으니 상세 정책을 확인해
+            주세요.
+          </div>
+        </article>
+
+        <div
+          class="faq__a"
+          id="a-contact"
+          role="region"
+          aria-labelledby="q-contact"
+        >
+          앱 내 <b>고객센터 &gt; 1:1 문의</b> 또는 이메일
+          <a href="mailto:support@semo.example" target="_blank" rel="noopener"
+            >support@semo.example</a
+          >
+          로 연락 주세요.
+        </div>
+      </section>
+
+      <div class="empty" id="empty">
+        검색 결과가 없습니다. 다른 키워드나 카테고리를 시도해 보세요.
+      </div>
+    </main>
+
+    <!-- ======= FOOTER (추가) ======= -->
+    <footer class="site-footer">
+      <div class="container inner">
+        <div class="footer-left">
+          <h3>SEMO 창고이음</h3>
+          <p>창고와 사람을 연결하는 생활 밀착형 물류 플랫폼</p>
+          <p class="copy">© 2025 SEMO. All rights reserved.</p>
+        </div>
+        <div class="footer-mid">
+          <p><strong>고객센터</strong></p>
+          <p>
+            Email:
+            <a href="mailto:support@semo.example">support@semo.example</a>
+          </p>
+          <p>전화: 02-1234-5678</p>
+        </div>
+        <div class="footer-right">
+          <p><strong>Follow Us</strong></p>
+          <div class="sns">
+            <a href="#">🌐</a>
+            <a href="#">📘</a>
+            <a href="#">📷</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </th:block>
+
+  <th:block layout:fragment="extra-js">
+    <script th:inline="javascript">
+      (function () {
+        const root = document.getElementById("faq-root");
+        if (!root) return;
+
+        const list = document.getElementById("faq-list");
+        const items = Array.from(list.querySelectorAll(".faq"));
+        const search = document.getElementById("faq-search");
+        const chips = Array.from(document.querySelectorAll(".chipbar .chip"));
+        const btnOpen = document.getElementById("btn-open");
+        const btnClose = document.getElementById("btn-close");
+        const empty = document.getElementById("empty");
+
+        list.addEventListener("click", (e) => {
+          const q = e.target.closest(".faq__q");
+          const copyBtn = e.target.closest(".copy");
+
+          if (copyBtn) {
+            const anchor = copyBtn.getAttribute("data-anchor");
+            const url = `${location.origin}${location.pathname}${anchor}`;
+            navigator.clipboard.writeText(url).then(() => {
+              copyBtn.textContent = "복사됨";
+              setTimeout(() => (copyBtn.textContent = "링크복사"), 1200);
+            });
+            return;
+          }
+
+          if (!q) return;
+          const article = q.closest(".faq");
+          const expanded = q.getAttribute("aria-expanded") === "true";
+          q.setAttribute("aria-expanded", String(!expanded));
+          article.classList.toggle("open");
+        });
+
+        btnOpen.addEventListener("click", () => {
+          items.forEach((it) => {
+            it.classList.add("open");
+            it.querySelector(".faq__q").setAttribute("aria-expanded", "true");
+          });
+        });
+        btnClose.addEventListener("click", () => {
+          items.forEach((it) => {
+            it.classList.remove("open");
+            it.querySelector(".faq__q").setAttribute("aria-expanded", "false");
+          });
+        });
+
+        let activeCat = "all";
+        chips.forEach((chip) => {
+          chip.addEventListener("click", () => {
+            chips.forEach((c) => c.classList.remove("active"));
+            chip.classList.add("active");
+            activeCat = chip.getAttribute("data-cat");
+            applyFilters();
+          });
+        });
+
+        search.addEventListener("input", () => applyFilters());
+
+        function applyFilters() {
+          const q = search.value.trim().toLowerCase();
+          let visibleCount = 0;
+
+          items.forEach((it) => {
+            const cat = it.getAttribute("data-cat");
+            const text = it.textContent.toLowerCase();
+            const byCat = activeCat === "all" || activeCat === cat;
+            const byText = !q || text.includes(q);
+            const show = byCat && byText;
+            it.style.display = show ? "" : "none";
+            if (show) visibleCount++;
+          });
+
+          empty.classList.toggle("show", visibleCount === 0);
+        }
+
+        if (location.hash) {
+          const target = document.querySelector(location.hash);
+          if (target && target.classList.contains("faq")) {
+            const qbtn = target.querySelector(".faq__q");
+            qbtn?.setAttribute("aria-expanded", "true");
+            target.classList.add("open");
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }
+      })();
+    </script>
+  </th:block>
+</html>
