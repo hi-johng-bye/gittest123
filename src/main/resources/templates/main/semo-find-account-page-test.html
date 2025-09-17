@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEMO - 아이디/비밀번호 찾기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #F5F9FF 0%, #E3F2FD 100%);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ========== HEADER (Simple) ========== */
+        .header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #E3F2FD, #90CAF9);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2196F3;
+            letter-spacing: -0.5px;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #2196F3;
+        }
+
+        /* ========== FIND ACCOUNT CONTAINER ========== */
+        .find-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 20px 40px;
+        }
+
+        .find-container {
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            padding: 50px;
+        }
+
+        .find-title {
+            font-size: 28px;
+            color: #1976D2;
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .find-subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        /* ========== TAB NAVIGATION ========== */
+        .tab-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            background: #F5F9FF;
+            padding: 5px;
+            border-radius: 15px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #2196F3;
+            box-shadow: 0 2px 10px rgba(33,150,243,0.2);
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: #2196F3;
+        }
+
+        /* ========== TAB CONTENT ========== */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== VERIFICATION METHOD ========== */
+        .method-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .method-card {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #E3F2FD;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .method-card:hover {
+            background: #F5F9FF;
+        }
+
+        .method-card.selected {
+            border-color: #2196F3;
+            background: linear-gradient(135deg, #F5F9FF, #E3F2FD);
+        }
+
+        .method-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .method-title {
+            font-size: 14px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        /* ========== FORM STYLES ========== */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #E3F2FD;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #2196F3;
+            background: #F5F9FF;
+        }
+
+        .form-input:disabled {
+            background: #F5F5F5;
+            cursor: not-allowed;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-group .form-input {
+            flex: 1;
+        }
+
+        .btn-verify {
+            padding: 14px 24px;
+            background: white;
+            color: #2196F3;
+            border: 2px solid #2196F3;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-verify:hover {
+            background: #E3F2FD;
+        }
+
+        .btn-verify:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ========== TIMER ========== */
+        .timer {
+            color: #F44336;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .timer.active {
+            display: block;
+        }
+
+        /* ========== RESULT BOX ========== */
+        .result-box {
+            display: none;
+            background: linear-gradient(135deg, #E8F5E9, #F1F8E9);
+            border: 2px solid #4CAF50;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .result-box.active {
+            display: block;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from { 
+                opacity: 0; 
+                max-height: 0;
+                transform: translateY(-10px);
+            }
+            to { 
+                opacity: 1; 
+                max-height: 200px;
+                transform: translateY(0);
+            }
+        }
+
+        .result-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .result-title {
+            font-size: 18px;
+            color: #2E7D32;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .result-email {
+            font-size: 16px;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .result-date {
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* ========== ERROR/SUCCESS MESSAGES ========== */
+        .message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.active {
+            display: block;
+        }
+
+        .message.error {
+            background: #FFEBEE;
+            color: #C62828;
+            border: 1px solid #FFCDD2;
+        }
+
+        .message.success {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border: 1px solid #C8E6C9;
+        }
+
+        .message.info {
+            background: #E3F2FD;
+            color: #1565C0;
+            border: 1px solid #BBDEFB;
+        }
+
+        /* ========== BUTTONS ========== */
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #42A5F5, #2196F3);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(33,150,243,0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 16px;
+            background: white;
+            color: #2196F3;
+            border: 2px solid #E3F2FD;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: #F5F9FF;
+        }
+
+        /* ========== LINKS ========== */
+        .form-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #E0E0E0;
+        }
+
+        .form-link {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .form-link:hover {
+            color: #2196F3;
+        }
+
+        /* ========== PASSWORD RESET FORM ========== */
+        .reset-section {
+            display: none;
+        }
+
+        .reset-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .password-strength {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .strength-bar {
+            flex: 1;
+            height: 4px;
+            background: #E0E0E0;
+            border-radius: 2px;
+            transition: background 0.3s;
+        }
+
+        .strength-bar.active {
+            background: #4CAF50;
+        }
+
+        .strength-bar.weak {
+            background: #FFC107;
+        }
+
+        .strength-bar.strong {
+            background: #4CAF50;
+        }
+
+        .password-requirements {
+            margin-top: 10px;
+            padding: 10px;
+            background: #F5F9FF;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        .requirement {
+            color: #999;
+            margin: 5px 0;
+        }
+
+        .requirement.met {
+            color: #4CAF50;
+        }
+
+        .requirement::before {
+            content: '○ ';
+        }
+
+        .requirement.met::before {
+            content: '✓ ';
+        }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            background: white;
+            border-top: 1px solid #E0E0E0;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .find-container {
+                padding: 30px 20px;
+            }
+
+            .method-selector {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-container">
+            <a href="/" class="logo">
+                <div class="logo-icon">📦</div>
+                <span class="logo-text">SEMO</span>
+            </a>
+            
+            <nav class="header-nav">
+                <a href="/" class="nav-link">홈으로</a>
+                <a href="/login" class="nav-link">로그인</a>
+                <a href="/signup" class="nav-link">회원가입</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- FIND ACCOUNT CONTAINER -->
+    <div class="find-wrapper">
+        <div class="find-container">
+            <h1 class="find-title">계정 찾기</h1>
+            <p class="find-subtitle">아이디 또는 비밀번호를 잊으셨나요?</p>
+            
+            <!-- Tab Navigation -->
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="switchTab('findId')">아이디 찾기</button>
+                <button class="tab-btn" onclick="switchTab('findPassword')">비밀번호 찾기</button>
+            </div>
+            
+            <!-- Find ID Tab -->
+            <div class="tab-content active" id="findId">
+                <!-- Verification Method Selection -->
+                <div class="method-selector">
+                    <div class="method-card selected" onclick="selectMethod('phone', 'id')">
+                        <div class="method-icon">📱</div>
+                        <div class="method-title">휴대폰 인증</div>
+                    </div>
+                    <div class="method-card" onclick="selectMethod('email', 'id')">
+                        <div class="method-icon">✉️</div>
+                        <div class="method-title">이메일 인증</div>
+                    </div>
+                </div>
+                
+                <!-- Phone Verification Form -->
+                <div id="phoneMethodId" class="method-content">
+                    <form id="findIdPhoneForm">
+                        <div class="form-group">
+                            <label class="form-label">이름</label>
+                            <input type="text" class="form-input" placeholder="실명을 입력하세요" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">휴대폰 번호</label>
+                            <div class="input-group">
+                                <input type="tel" class="form-input" placeholder="010-0000-0000" required>
+                                <button type="button" class="btn-verify" onclick="sendVerification('phone-id')">인증번호 발송</button>
+                            </div>
+                            <div class="timer" id="phoneTimerId">남은 시간: 3:00</div>
+                        </div>
+                        
+                        <div class="form-group" id="verifyCodeGroupPhoneId" style="display: none;">
+                            <label class="form-label">인증번호</label>
+                            <input type="text" class="form-input" placeholder="인증번호 6자리를 입력하세요" maxlength="6">
+                        </div>
+                        
+                        <!-- Result Box -->
+                        <div class="result-box" id="idResultBox">
+                            <div class="result-icon">✅</div>
+                            <div class="result-title">아이디를 찾았습니다!</div>
+                            <div class="result-email">example@semo.com</div>
+                            <div class="result-date">가입일: 2024년 1월 15일</div>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary" onclick="findAccount(event, 'id')">아이디 찾기</button>
+                    </form>
+                </div>
+                
+                <!-- Email Verification Form -->
+                <div id="emailMethodId" class="method-content" style="display: none;">
+                    <form id="findIdEmailForm">
+                        <div class="form-group">
+                            <label class="form-label">이름</label>
+                            <input type="text" class="form-input" placeholder="실명을 입력하세요" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">가입시 등록한 이메일</label>
+                            <input type="email" class="form-input" placeholder="example@email.com" required>
+                        </div>
+                        
+                        <div class="message info">
+                            입력하신 이메일로 아이디 정보가 발송됩니다.
+                        </div>
+                        
+                        <button type="submit" class="btn-primary" onclick="findAccount(event, 'id-email')">이메일로 아이디 받기</button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Find Password Tab -->
+            <div class="tab-content" id="findPassword">
+                <!-- Verification Method Selection -->
+                <div class="method-selector">
+                    <div class="method-card selected" onclick="selectMethod('phone', 'pw')">
+                        <div class="method-icon">📱</div>
+                        <div class="method-title">휴대폰 인증</div>
+                    </div>
+                    <div class="method-card" onclick="selectMethod('email', 'pw')">
+                        <div class="method-icon">✉️</div>
+                        <div class="method-title">이메일 인증</div>
+                    </div>
+                </div>
+                
+                <!-- Phone Verification Form -->
+                <div id="phoneMethodPw" class="method-content">
+                    <form id="findPwPhoneForm">
+                        <div class="form-group">
+                            <label class="form-label">아이디(이메일)</label>
+                            <input type="email" class="form-input" placeholder="example@semo.com" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">이름</label>
+                            <input type="text" class="form-input" placeholder="실명을 입력하세요" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">휴대폰 번호</label>
+                            <div class="input-group">
+                                <input type="tel" class="form-input" placeholder="010-0000-0000" required>
+                                <button type="button" class="btn-verify" onclick="sendVerification('phone-pw')">인증번호 발송</button>
+                            </div>
+                            <div class="timer" id="phoneTimerPw">남은 시간: 3:00</div>
+                        </div>
+                        
+                        <div class="form-group" id="verifyCodeGroupPhonePw" style="display: none;">
+                            <label class="form-label">인증번호</label>
+                            <input type="text" class="form-input" placeholder="인증번호 6자리를 입력하세요" maxlength="6">
+                        </div>
+                        
+                        <button type="submit" class="btn-primary" onclick="verifyAndReset(event, 'phone')">인증하기</button>
+                    </form>
+                </div>
+                
+                <!-- Email Verification Form -->
+                <div id="emailMethodPw" class="method-content" style="display: none;">
+                    <form id="findPwEmailForm">
+                        <div class="form-group">
+                            <label class="form-label">아이디(이메일)</label>
+                            <input type="email" class="form-input" placeholder="example@semo.com" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">이름</label>
+                            <input type="text" class="form-input" placeholder="실명을 입력하세요" required>
+                        </div>
+                        
+                        <div class="message info active">
+                            입력하신 이메일로 비밀번호 재설정 링크가 발송됩니다.
+                        </div>
+                        
+                        <button type="submit" class="btn-primary" onclick="sendResetLink(event)">재설정 링크 받기</button>
+                    </form>
+                </div>
+                
+                <!-- Password Reset Section -->
+                <div class="reset-section" id="resetSection">
+                    <form id="resetPasswordForm">
+                        <div class="message success active">
+                            인증이 완료되었습니다. 새로운 비밀번호를 설정해주세요.
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">새 비밀번호</label>
+                            <input type="password" class="form-input" id="newPassword" placeholder="8자 이상, 영문+숫자+특수문자" required>
+                            <div class="password-strength">
+                                <div class="strength-bar" id="strength1"></div>
+                                <div class="strength-bar" id="strength2"></div>
+                                <div class="strength-bar" id="strength3"></div>
+                                <div class="strength-bar" id="strength4"></div>
+                            </div>
+                            <div class="password-requirements">
+                                <div class="requirement" id="req-length">8자 이상</div>
+                                <div class="requirement" id="req-letter">영문 포함</div>
+                                <div class="requirement" id="req-number">숫자 포함</div>
+                                <div class="requirement" id="req-special">특수문자 포함</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">새 비밀번호 확인</label>
+                            <input type="password" class="form-input" id="confirmPassword" placeholder="비밀번호를 다시 입력하세요" required>
+                            <div class="message error" id="passwordMatchError">비밀번호가 일치하지 않습니다.</div>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary" onclick="resetPassword(event)">비밀번호 변경</button>
+                        <button type="button" class="btn-secondary" onclick="window.location.href='/login'">로그인 페이지로</button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Links -->
+            <div class="form-links">
+                <a href="/login" class="form-link">로그인</a>
+                <a href="/signup" class="form-link">회원가입</a>
+                <a href="/support" class="form-link">고객센터</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>© 2024 SEMO. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Tab switching
+        function switchTab(tab) {
+            // Remove active class from all tabs and contents
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab
+            if (tab === 'findId') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('findId').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('findPassword').classList.add('active');
+            }
+            
+            // Reset forms
+            resetForms();
+        }
+        
+        // Method selection
+        function selectMethod(method, type) {
+            // Update UI
+            const cards = event.currentTarget.parentElement.querySelectorAll('.method-card');
+            cards.forEach(card => card.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            
+            // Show/hide method content
+            if (type === 'id') {
+                if (method === 'phone') {
+                    document.getElementById('phoneMethodId').style.display = 'block';
+                    document.getElementById('emailMethodId').style.display = 'none';
+                } else {
+                    document.getElementById('phoneMethodId').style.display = 'none';
+                    document.getElementById('emailMethodId').style.display = 'block';
+                }
+            } else {
+                if (method === 'phone') {
+                    document.getElementById('phoneMethodPw').style.display = 'block';
+                    document.getElementById('emailMethodPw').style.display = 'none';
+                } else {
+                    document.getElementById('phoneMethodPw').style.display = 'none';
+                    document.getElementById('emailMethodPw').style.display = 'block';
+                }
+            }
+        }
+        
+        // Send verification code
+        let timerInterval;
+        function sendVerification(type) {
+            const button = event.target;
+            const phoneInput = button.parentElement.querySelector('input[type="tel"]');
+            
+            if (!phoneInput.value) {
+                alert('휴대폰 번호를 입력해주세요.');
+                return;
+            }
+            
+            // Show verification code input
+            if (type === 'phone-id') {
+                document.getElementById('verifyCodeGroupPhoneId').style.display = 'block';
+                startTimer('phoneTimerId');
+            } else {
+                document.getElementById('verifyCodeGroupPhonePw').style.display = 'block';
+                startTimer('phoneTimerPw');
+            }
+            
+            // Disable button
+            button.disabled = true;
+            button.textContent = '재발송';
+            
+            // Simulate sending SMS
+            setTimeout(() => {
+                alert('인증번호가 발송되었습니다.');
+                button.disabled = false;
+            }, 1000);
+        }
+        
+        // Timer function
+        function startTimer(timerId) {
+            const timerElement = document.getElementById(timerId);
+            timerElement.classList.add('active');
+            
+            let time = 180; // 3 minutes
+            clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                const minutes = Math.floor(time / 60);
+                const seconds = time % 60;
+                timerElement.textContent = `남은 시간: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (time <= 0) {
+                    clearInterval(timerInterval);
+                    timerElement.textContent = '시간이 만료되었습니다.';
+                    timerElement.style.color = '#999';
+                }
+                time--;
+            }, 1000);
+        }
+        
+        // Find account
+        function findAccount(event, type) {
+            event.preventDefault();
+            
+            if (type === 'id') {
+                // Simulate finding ID
+                setTimeout(() => {
+                    document.getElementById('idResultBox').classList.add('active');
+                }, 500);
+            } else if (type === 'id-email') {
+                alert('입력하신 이메일로 아이디 정보가 발송되었습니다.');
+            }
+        }
+        
+        // Verify and show reset form
+        function verifyAndReset(event, method) {
+            event.preventDefault();
+            
+            // Hide current form and show reset section
+            document.getElementById('phoneMethodPw').style.display = 'none';
+            document.getElementById('emailMethodPw').style.display = 'none';
+            document.getElementById('resetSection').classList.add('active');
+        }
+        
+        // Send reset link via email
+        function sendResetLink(event) {
+            event.preventDefault();
+            alert('비밀번호 재설정 링크가 이메일로 발송되었습니다.\n이메일을 확인해주세요.');
+        }
+        
+        // Password strength checker
+        document.getElementById('newPassword')?.addEventListener('input', function(e) {
+            const password = e.target.value;
+            let strength = 0;
+            
+            // Check requirements
+            const requirements = {
+                length: password.length >= 8,
+                letter: /[a-zA-Z]/.test(password),
+                number: /\d/.test(password),
+                special: /[!@#$%^&*]/.test(password)
+            };
+            
+            // Update requirement indicators
+            document.getElementById('req-length').classList.toggle('met', requirements.length);
+            document.getElementById('req-letter').classList.toggle('met', requirements.letter);
+            document.getElementById('req-number').classList.toggle('met', requirements.number);
+            document.getElementById('req-special').classList.toggle('met', requirements.special);
+            
+            // Calculate strength
+            Object.values(requirements).forEach(met => {
+                if (met) strength++;
+            });
+            
+            // Update strength bars
+            const bars = document.querySelectorAll('.strength-bar');
+            bars.forEach((bar, index) => {
+                bar.classList.remove('active', 'weak', 'strong');
+                if (index < strength) {
+                    bar.classList.add('active');
+                    if (strength <= 2) bar.classList.add('weak');
+                    else bar.classList.add('strong');
+                }
+            });
+        });
+        
+        // Password match checker
+        document.getElementById('confirmPassword')?.addEventListener('input', function(e) {
+            const password = document.getElementById('newPassword').value;
+            const confirmPassword = e.target.value;
+            const errorMsg = document.getElementById('passwordMatchError');
+            
+            if (confirmPassword && password !== confirmPassword) {
+                errorMsg.classList.add('active');
+            } else {
+                errorMsg.classList.remove('active');
+            }
+        });
+        
+        // Reset password
+        function resetPassword(event) {
+            event.preventDefault();
+            
+            const password = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                alert('비밀번호가 일치하지 않습니다.');
+                return;
+            }
+            
+            if (password.length < 8) {
+                alert('비밀번호는 8자 이상이어야 합니다.');
+                return;
+            }
+            
+            // Simulate password reset
+            alert('비밀번호가 성공적으로 변경되었습니다.\n로그인 페이지로 이동합니다.');
+            window.location.href = '/login';
+        }
+        
+        // Phone number formatting
+        document.querySelectorAll('input[type="tel"]').forEach(input => {
+            input.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/[^\d]/g, '');
+                if (value.length > 3 && value.length <= 7) {
+                    value = value.slice(0, 3) + '-' + value.slice(3);
+                } else if (value.length > 7) {
+                    value = value.slice(0, 3) + '-' + value.slice(3, 7) + '-' + value.slice(7, 11);
+                }
+                e.target.value = value;
+            });
+        });
+        
+        // Verification code input - numbers only
+        document.querySelectorAll('input[maxlength="6"]').forEach(input => {
+            input.addEventListener('input', function(e) {
+                e.target.value = e.target.value.replace(/[^\d]/g, '');
+            });
+        });
+        
+        // Reset forms
+        function resetForms() {
+            document.querySelectorAll('form').forEach(form => form.reset());
+            document.querySelectorAll('.result-box').forEach(box => box.classList.remove('active'));
+            document.querySelectorAll('.message').forEach(msg => {
+                if (!msg.classList.contains('info')) {
+                    msg.classList.remove('active');
+                }
+            });
+            document.getElementById('resetSection').classList.remove('active');
+            document.getElementById('verifyCodeGroupPhoneId').style.display = 'none';
+            document.getElementById('verifyCodeGroupPhonePw').style.display = 'none';
+            clearInterval(timerInterval);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default methods
+            document.getElementById('phoneMethodId').style.display = 'block';
+            document.getElementById('emailMethodId').style.display = 'none';
+            document.getElementById('phoneMethodPw').style.display = 'block';
+            document.getElementById('emailMethodPw').style.display = 'none';
+        });
+    </script>
+</body>
+</html>
