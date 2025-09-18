@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: semo
+  devtools:
+    livereload:
+      enabled: true
+  datasource:
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:postgresql://35.209.174.228:5432/semo
+    username: semo
+    password: ENC(el3Uhoc0s+n5XvSMjDbrwFV8nEaOCQjUKPbsOB/59vc5UXuRdgPXwiV2T5lPMJjg)
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+    show-sql: true
+  thymeleaf:
+    cache: false
+  servlet:
+    context-path: /
+server:
+  port: 8080
+# Jasypt
+jasypt:
+  encryptor:
+    password: ${SECRET-KEY}
+# Logging
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+        type:
+          descriptor:
+            sql: trace

@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEMO - 로그인</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #F5F9FF 0%, #E3F2FD 100%);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ========== HEADER (Simple) ========== */
+        .header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #E3F2FD, #90CAF9);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2196F3;
+            letter-spacing: -0.5px;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #2196F3;
+        }
+
+        /* ========== LOGIN CONTAINER ========== */
+        .login-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 20px 40px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            max-width: 1000px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            overflow: hidden;
+            min-height: 600px;
+        }
+
+        /* ========== LEFT SIDE - LOGIN FORM ========== */
+        .login-form-section {
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-title {
+            font-size: 32px;
+            color: #1976D2;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .login-subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 14px;
+        }
+
+        /* User Type Selector */
+        .user-type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            background: #F5F9FF;
+            padding: 5px;
+            border-radius: 15px;
+        }
+
+        .user-type-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .user-type-btn.active {
+            background: white;
+            color: #2196F3;
+            box-shadow: 0 2px 10px rgba(33,150,243,0.2);
+        }
+
+        .user-type-btn:hover:not(.active) {
+            color: #2196F3;
+        }
+
+        .user-type-icon {
+            font-size: 20px;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #E3F2FD;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #2196F3;
+            background: #F5F9FF;
+        }
+
+        .form-input::placeholder {
+            color: #AAA;
+        }
+
+        /* Remember & Forgot */
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .remember-me label {
+            color: #666;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .forgot-link {
+            color: #2196F3;
+            text-decoration: none;
+            font-size: 14px;
+            transition: opacity 0.3s;
+        }
+
+        .forgot-link:hover {
+            opacity: 0.7;
+        }
+
+        /* Login Button */
+        .login-button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #42A5F5, #2196F3);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 25px;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(33,150,243,0.3);
+        }
+
+        /* Social Login */
+        .divider {
+            text-align: center;
+            position: relative;
+            margin: 30px 0;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background: #E0E0E0;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 15px;
+            position: relative;
+            color: #999;
+            font-size: 13px;
+        }
+
+        .social-login-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #E0E0E0;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .social-btn.kakao {
+            background: #FEE500;
+            border-color: #FEE500;
+            color: #000;
+        }
+
+        .social-btn.google {
+            border: 2px solid #E0E0E0;
+        }
+
+        .social-btn.naver {
+            background: #03C75A;
+            border-color: #03C75A;
+            color: white;
+        }
+
+        .social-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Sign up link */
+        .signup-link {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .signup-link a {
+            color: #2196F3;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* ========== RIGHT SIDE - INFO SECTION ========== */
+        .info-section {
+            background: linear-gradient(135deg, #2196F3, #42A5F5);
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .info-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .info-icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+        }
+
+        .info-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .info-description {
+            font-size: 16px;
+            line-height: 1.6;
+            opacity: 0.95;
+            margin-bottom: 40px;
+        }
+
+        .info-features {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            text-align: left;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.1);
+            padding: 12px 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-icon {
+            width: 30px;
+            height: 30px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            background: white;
+            border-top: 1px solid #E0E0E0;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #2196F3;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .login-container {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+
+            .info-section {
+                display: none;
+            }
+
+            .login-form-section {
+                padding: 40px;
+            }
+
+            .social-login-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-container">
+            <a href="/" class="logo">
+                <div class="logo-icon">📦</div>
+                <span class="logo-text">SEMO</span>
+            </a>
+            
+            <nav class="header-nav">
+                <a href="/" class="nav-link">홈으로</a>
+                <a href="#" class="nav-link">서비스 소개</a>
+                <a href="#" class="nav-link">고객센터</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- LOGIN CONTAINER -->
+    <div class="login-wrapper">
+        <div class="login-container">
+            <!-- LEFT SIDE - LOGIN FORM -->
+            <div class="login-form-section">
+                <h1 class="login-title">환영합니다!</h1>
+                <p class="login-subtitle">SEMO와 함께 안전한 창고 관리를 시작하세요</p>
+                
+                <!-- User Type Selector -->
+                <div class="user-type-selector">
+                    <button class="user-type-btn active" onclick="selectUserType(this, 'tenant')">
+                        <span class="user-type-icon">📦</span>
+                        <span>임차인</span>
+                    </button>
+                    <button class="user-type-btn" onclick="selectUserType(this, 'landlord')">
+                        <span class="user-type-icon">🏢</span>
+                        <span>임대인</span>
+                    </button>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">이메일</label>
+                        <input type="email" class="form-input" placeholder="example@semo.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">비밀번호</label>
+                        <input type="password" class="form-input" placeholder="비밀번호를 입력하세요" required>
+                    </div>
+                    
+                    <div class="form-options">
+                        <div class="remember-me">
+                            <input type="checkbox" id="remember">
+                            <label for="remember">로그인 상태 유지</label>
+                        </div>
+                        <a href="#" class="forgot-link">비밀번호 찾기</a>
+                    </div>
+                    
+                    <button type="submit" class="login-button">로그인</button>
+                </form>
+                
+                <!-- Social Login -->
+                <div class="divider">
+                    <span>간편 로그인</span>
+                </div>
+                
+                <div class="social-login-buttons">
+                    <button class="social-btn kakao">
+                        <span class="social-icon">💬</span>
+                        <span>카카오</span>
+                    </button>
+                    <button class="social-btn google">
+                        <span class="social-icon">G</span>
+                        <span>구글</span>
+                    </button>
+                    <button class="social-btn naver">
+                        <span class="social-icon">N</span>
+                        <span>네이버</span>
+                    </button>
+                </div>
+                
+                <!-- Sign up link -->
+                <div class="signup-link">
+                    아직 회원이 아니신가요? <a href="/signup">회원가입</a>
+                </div>
+            </div>
+            
+            <!-- RIGHT SIDE - INFO SECTION -->
+            <div class="info-section">
+                <div class="info-content">
+                    <div class="info-icon">🔐</div>
+                    <h2 class="info-title">안전한 창고 관리의 시작</h2>
+                    <p class="info-description">
+                        SEMO는 최첨단 보안 시스템과 스마트한 관리 도구로<br>
+                        여러분의 소중한 물품을 안전하게 보호합니다
+                    </p>
+                    
+                    <div class="info-features">
+                        <div class="feature">
+                            <div class="feature-icon">✓</div>
+                            <span>24시간 실시간 CCTV 모니터링</span>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">✓</div>
+                            <span>스마트폰으로 언제든 출입 관리</span>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">✓</div>
+                            <span>온습도 자동 조절 시스템</span>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">✓</div>
+                            <span>화재 및 도난 종합 보험 가입</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="#">이용약관</a>
+            <a href="#">개인정보처리방침</a>
+            <a href="#">고객센터</a>
+            <a href="#">사업자정보</a>
+        </div>
+        <p>© 2024 SEMO. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // User Type Selection
+        function selectUserType(btn, type) {
+            // Remove active class from all buttons
+            document.querySelectorAll('.user-type-btn').forEach(b => {
+                b.classList.remove('active');
+            });
+            
+            // Add active class to clicked button
+            btn.classList.add('active');
+            
+            // Update form based on user type
+            const loginTitle = document.querySelector('.login-title');
+            const loginSubtitle = document.querySelector('.login-subtitle');
+            
+            if (type === 'tenant') {
+                loginTitle.textContent = '환영합니다!';
+                loginSubtitle.textContent = 'SEMO와 함께 안전한 창고 관리를 시작하세요';
+                updateInfoSection('tenant');
+            } else {
+                loginTitle.textContent = '임대인 로그인';
+                loginSubtitle.textContent = '창고를 효율적으로 관리하고 수익을 창출하세요';
+                updateInfoSection('landlord');
+            }
+        }
+        
+        // Update right side info based on user type
+        function updateInfoSection(type) {
+            const infoTitle = document.querySelector('.info-title');
+            const infoDescription = document.querySelector('.info-description');
+            const features = document.querySelector('.info-features');
+            
+            if (type === 'landlord') {
+                infoTitle.textContent = '스마트한 창고 운영의 파트너';
+                infoDescription.innerHTML = 'SEMO와 함께라면 창고 운영이 쉬워집니다<br>효율적인 관리 시스템으로 수익을 극대화하세요';
+                
+                features.innerHTML = `
+                    <div class="feature">
+                        <div class="feature-icon">✓</div>
+                        <span>실시간 임대 현황 대시보드</span>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">✓</div>
+                        <span>자동 계약 및 결제 관리</span>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">✓</div>
+                        <span>임차인 관리 및 소통 도구</span>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">✓</div>
+                        <span>수익 분석 및 리포트 제공</span>
+                    </div>
+                `;
+            } else {
+                infoTitle.textContent = '안전한 창고 관리의 시작';
+                infoDescription.innerHTML = 'SEMO는 최첨단 보안 시스템과 스마트한 관리 도구로<br>여러분의 소중한 물품을 안전하게 보호합니다';
+                
+                features.innerHTML = `
+                    <div class="feature">
+                        <div class="feature-icon">✓</div>
+                        <span>24시간 실시간 CCTV 모니터링</span>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">✓</div>
+                        <span>스마트폰으로 언제든 출입 관리</span>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">✓</div>
+                        <span>온습도 자동 조절 시스템</span>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">✓</div>
+                        <span>화재 및 도난 종합 보험 가입</span>
+                    </div>
+                `;
+            }
+        }
+        
+        // Form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get user type
+            const userType = document.querySelector('.user-type-btn.active').textContent.includes('임차인') ? 'tenant' : 'landlord';
+            
+            // Here you would normally send the login request
+            console.log('Logging in as:', userType);
+            alert(`${userType === 'tenant' ? '임차인' : '임대인'}으로 로그인 중...`);
+        });
+        
+        // Social login handlers
+        document.querySelectorAll('.social-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const platform = this.textContent.trim();
+                const userType = document.querySelector('.user-type-btn.active').textContent.includes('임차인') ? '임차인' : '임대인';
+                console.log(`${userType} - ${platform} 로그인`);
+                alert(`${platform}으로 ${userType} 로그인을 진행합니다...`);
+            });
+        });
+    </script>
+</body>
+</html>

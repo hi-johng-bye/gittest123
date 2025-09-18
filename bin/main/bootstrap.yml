@@ -5,7 +5,7 @@ spring:
   cloud:
     vault:
       enabled: true
-      uri: http://35.209.174.228:8200
+      uri: http://146.56.42.159:8200
       authentication: TOKEN
       token: myroot
       fail-fast: true
