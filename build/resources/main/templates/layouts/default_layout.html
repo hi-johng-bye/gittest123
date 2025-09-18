@@ -1,0 +1,44 @@
+<!--
+  Created by IntelliJ IDEA.
+  User: heowonjae
+  Date: 2025. 9. 1.
+  Time: 13:17
+  To change this template use File | Settings | File Templates.
+-->
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <th:block layout:fragment="head"></th:block>
+  <title layout:title-pattern="$CONTENT_TITLE | $DECORATOR_TITLE">SEMO</title>
+  <!-- 공통으로 사용 할 css -->
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+  <link th:href="@{/webjars/font-awesome/css/fontawesome.css}" rel="stylesheet"/>
+  <link th:href="@{/webjars/font-awesome/css/brands.css}" rel="stylesheet"/>
+  <link th:href="@{/webjars/font-awesome/css/solid.css}" rel="stylesheet"/>
+  <link th:href="@{/webjars/dropzone/min/dropzone.min.css}" rel="stylesheet"/>
+  <!-- 공통으로 사용 할 css -->
+
+  <th:block layout:fragment="extra-css"></th:block>
+</head>
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+
+<main layout:fragment="content"></main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<!-- 공통으로 사용 할 js -->
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/webjars/dropzone/min/dropzone.min.js}"></script>
+<!-- 공통으로 사용 할 js -->
+
+
+
+<th:block layout:fragment="extra-js"></th:block>
+</body>
+</html>

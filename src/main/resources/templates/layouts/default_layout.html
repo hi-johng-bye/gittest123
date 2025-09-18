@@ -1,42 +1,36 @@
-<!--
-  Created by IntelliJ IDEA.
-  User: heowonjae
-  Date: 2025. 9. 1.
-  Time: 13:17
-  To change this template use File | Settings | File Templates.
--->
-<!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <th:block layout:fragment="head"></th:block>
-  <title layout:title-pattern="$CONTENT_TITLE | $DECORATOR_TITLE">SEMO</title>
-  <!-- 공통으로 사용 할 css -->
-  <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
-  <link th:href="@{/webjars/font-awesome/css/fontawesome.css}" rel="stylesheet"/>
-  <link th:href="@{/webjars/font-awesome/css/brands.css}" rel="stylesheet"/>
-  <link th:href="@{/webjars/font-awesome/css/solid.css}" rel="stylesheet"/>
-  <link th:href="@{/webjars/dropzone/min/dropzone.min.css}" rel="stylesheet"/>
-  <!-- 공통으로 사용 할 css -->
+<!-- layouts/default_layout.html -->
+<header class="site-header" th:with="uri=${((#httpServletRequest?.requestURI)?:'')}">
+  <div class="container inner">
+    <div class="logo">
+      <a href="/">SEMO <span>창고이음</span></a>
+    </div>
 
-  <th:block layout:fragment="extra-css"></th:block>
-</head>
-<body>
-<header th:replace="~{fragments/header :: header}"></header>
+    <nav class="nav">
+      <a href="/"
+         th:classappend="${(uri == '/' || uri == '') ? 'active' : ''}">
+        홈
+      </a>
+      <a href="/introduce"
+         th:classappend="${uri.startsWith('/introduce') ? 'active' : ''}">
+        서비스 소개
+      </a>
+      <a href="/faq"
+         th:classappend="${uri.startsWith('/faq') ? 'active' : ''}">
+        FAQ
+      </a>
+      <a href="/warehouses"
+         th:classappend="${uri.startsWith('/warehouses') ? 'active' : ''}">
+        창고 찾기
+      </a>
+      <a href="/contact"
+         th:classappend="${uri.startsWith('/contact') ? 'active' : ''}">
+        고객센터
+      </a>
+    </nav>
 
-<main layout:fragment="content"></main>
-
-<footer th:replace="~{fragments/footer :: footer}"></footer>
-
-<!-- 공통으로 사용 할 js -->
-<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
-<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
-<script th:src="@{/webjars/dropzone/min/dropzone.min.js}"></script>
-<!-- 공통으로 사용 할 js -->
-
-<th:block layout:fragment="extra-js"></th:block>
-</body>
-</html>
+    <div class="auth">
+      <a class="btn" href="/login">로그인</a>
+      <a class="btn outline" href="/signup">회원가입</a>
+    </div>
+  </div>
+</header>
