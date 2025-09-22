@@ -1,3 +1,8 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+<<<<<<< HEAD
+# Environment-dependent path to Maven home directory
+/mavenHomeManager.xml
+=======
+>>>>>>> 680c34e3cd335c81f533206ccf9d7b8f779e8e07

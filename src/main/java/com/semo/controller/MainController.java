@@ -10,6 +10,6 @@ public class MainController {
 
   @GetMapping(value = {"", "/"})
   public String main() {
-    return "main/main";
+    return "main/semo-main-page-test2";
   }
 }
